@@ -12,5 +12,9 @@ public class splitaxis {
 	public void changeAxis(){
 		actual = actual.equals(x)? y : x;
 	}
+	
+	public String getAxis(){
+		return actual;
+	}
 
 }

@@ -6,9 +6,13 @@ public class MeanKdTree extends KdTree {
 	public MeanKdTree(Point p) {
 		super(p);
 	}
+	
+	public MeanKdTree(Point p, Boolean line){
+		super(p,line);
+	}
 
-	public MeanKdTree(Point p, KdTree izq, KdTree der) {
-		super(p, izq, der);
+	public MeanKdTree(Point p, Boolean line, KdTree izq, KdTree der) {
+		super(p, line, izq, der);
 	}
 
 	@Override
