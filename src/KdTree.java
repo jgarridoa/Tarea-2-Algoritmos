@@ -27,6 +27,14 @@ public abstract class KdTree {
 		this.der = der;
 	}
 	
+	public boolean isLine(){
+		return this.isLine;
+	}
+	
 	public abstract KdTree construirKdtree(ArrayList<Point> P, splitaxis a);
+	
+	public Point getPoint(){
+		return this.p;
+	}
 
 }
