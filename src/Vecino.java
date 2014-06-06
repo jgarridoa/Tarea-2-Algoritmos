@@ -17,7 +17,7 @@ public class Vecino {
 		return mejorActual;
 	}
 
-	public void buscarMasCercano(KdTree T, Point q) {
+	private void buscarMasCercano(KdTree T, Point q) {
 		if (T.isLine()) {
 			KdTree nodoCercano, nodoDistante;
 			double distanciaAlEje;
@@ -42,8 +42,9 @@ public class Vecino {
 					nodoDistante = T.izq;
 				}
 			}
-			buscarMasCercano(nodoCercano, q); // cuando esta recursión termina, se habrá encontrado el punto que está en la misma región que Q
-			if (distanciaAlEje < this.distanciaActual)
+			if (nodoCercano!= null)
+				buscarMasCercano(nodoCercano, q); // cuando esta recursión termina, se habrá encontrado el punto que está en la misma región que Q
+			if (distanciaAlEje < this.distanciaActual && nodoDistante != null)
 				buscarMasCercano(nodoDistante, q);
 		} else { // si es que es un punto
 			double dist = distancia(T.getPoint(), q);

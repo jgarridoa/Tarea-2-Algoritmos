@@ -1,79 +1,125 @@
 import java.util.ArrayList;
 
-public class MedianKdTree extends KdTree {
+public class MedianKdTree {
 
-	public MedianKdTree(Point p) {
-		super(p);
-	}
-
-	public MedianKdTree(Point p, Boolean line) {
-		super(p, line);
-	}
-
-	public MedianKdTree(Point p, Boolean line, KdTree izq, KdTree der) {
-		super(p, line, izq, der);
-	}
-
-	@Override
-	public KdTree construirKdtree(ArrayList<Point> P, splitaxis a) {
-		if (P.size() == 1) {
-			return new MedianKdTree(P.get(0));
-		} else {
-			// cosas
-			return null;
-		}
-	}
-
-	public static int QuickSelect(ArrayList<Point> P, int k, int first, int last) {
-		if (first <= last) {
-			int pivot = Select(P, first, last);
-			if (pivot == k) {
-				return k;
-			}
-			if (pivot > k) {
-				return QuickSelect(P, first, pivot - 1, k);
-			}
-			return QuickSelect(P, pivot + 1, last, k);
-		}
-		return Integer.MIN_VALUE;
-
-	}
-
-	// Selecci�n de la Mediana de las medianas.
-	private static int Select(ArrayList<Point> P, int first, int last) {
-		double dif = (double) (last - first);
-		int numMedians = (int)Math.ceil(dif / 5);
-		for (int i = 0; i < numMedians; i++) {
-			int subLeft = first + i * 5;
-			int subRight = first + (i+1)*5 -1;
-			if (subRight > last)
-				subRight = last;
-			dif = (double) (subRight - subLeft);
-			System.out.println((int)Math.ceil(dif / 2));
-			int medianIx = QuickSelect(P, (int)Math.ceil(dif / 2), subLeft,
-					subRight);
-			
-			Point aux = P.get(medianIx);
-			P.set(medianIx, P.get(first + i));
-			P.set(first + i, aux);
-		}
-		return QuickSelect(P, numMedians / 2, first, first + numMedians - 1);
-
+	public static KdTree construirKdTree(Points P, Splitaxis a){
+		return construirKdTree(P, a, 0, P.size() - 1);
 	}
 	
-	public static void main(String[] args) {
-		ArrayList<Point> P = new ArrayList<Point>(10);
-		for(int i=0;i<10;i++){
-			P.add(i,new Point(i+1,i+1));
+	private static KdTree construirKdTree(Points P, Splitaxis a, int minA,
+			int maxA) {
+		if (minA > maxA)
+			return null;
+		else if (minA == maxA)
+			return new KdTree(P.getPoint(minA));
+
+		else {
+			int[] keyArray, dependantArray;
+			int median;
+			Point eje;
+			if (a.isX()) {
+				keyArray = P.getListX();
+				dependantArray = P.getListY();
+				median = QuickSelect(keyArray, dependantArray, minA, maxA, (maxA - minA) /2);
+				eje = new EjeY(median);
+			} else {
+				keyArray = P.getListY();
+				dependantArray = P.getListX();
+				median = QuickSelect(keyArray, dependantArray, minA, maxA, (maxA - minA) /2);
+				eje = new EjeX(median);
+			}
+
+			
+			if (median > maxA)
+				median = maxA;
+			Splitaxis alterAxis = Splitaxis.changeAxis(a);
+			return new KdTree(eje, construirKdTree(P, alterAxis, minA,
+					median - 1), construirKdTree(P, alterAxis, median, maxA));
 		}
-		/*P.set(4,new Point(7,7));
-		P.set(3,new Point(2,2));
-		P.set(6,new Point(4,4));
-		P.set(7, new Point(9,9));
-		P.set()*/
-		System.out.println(P);
-		int median = QuickSelect(P,5,0,9);
-		
+	}
+
+
+	private static int partition(int[] keyArray, int[] dependantArray,
+			int minA, int maxA, double pivotValue) {
+		int smaller = minA;
+		int greater = maxA;
+		while (smaller <= greater) {
+			if (keyArray[smaller] <= pivotValue)
+				smaller++;
+			else {
+				// swap keyArray
+				int aux = keyArray[greater];
+				keyArray[greater] = keyArray[smaller];
+				keyArray[smaller] = aux;
+				if (dependantArray != null) {
+					// swap dependantArray
+					aux = dependantArray[greater];
+					dependantArray[greater] = dependantArray[smaller];
+					dependantArray[smaller] = aux;
+					greater--;
+				}
+			}
+		}
+		// al finalizar el ciclo, la variable smaller indicará la posición
+		// del primero de los números más grandes que el pivote
+		return smaller;
+	}
+
+	public static int QuickSelect(int[] keyArray, int[] dependantArray,
+			int first, int last, int n) {
+		if (first >= last)
+			return last;
+		int pivotValue = medianOfMedians(keyArray, first, last);
+		int pivotIndex = partition(keyArray, dependantArray, first, last,
+				pivotValue);
+
+		if (pivotIndex == n)
+			return keyArray[n];
+		else if (pivotIndex > n)
+			return QuickSelect(keyArray, dependantArray, first, pivotIndex - 1,
+					n);
+		else
+			return QuickSelect(keyArray, dependantArray, pivotIndex + 1, last,
+					n);
+
+	}
+
+	// Selección de la Mediana de las medianas
+	private static int medianOfMedians(int[] keyArray, int first, int last) {
+		int numMedians = (int) Math.ceil((last - first) / 5d);
+		if (numMedians == 1){
+			insertionSort(keyArray, first, last);
+			return keyArray[(first + last)/2 ];
+		}
+			
+		int[] medians = new int[numMedians];
+		for (int i = 0; i < numMedians; i++) {
+			int subLeft = first + i * 5;
+			int subRight = subLeft + 4;
+			if (subRight > last)
+				subRight = last;
+			insertionSort(keyArray, subLeft, subRight);
+			medians[i] = keyArray[(subRight + subLeft) / 2];
+		}
+		return QuickSelect(medians, null, 0, numMedians - 1, numMedians /2 );
+
+	}
+
+	private static void insertionSort(int[] array, int min, int max) {
+		for (int i = min; i <= max; i++)
+			insert(array, i, min);
+	}
+
+	private static void insert(int[] array, int position, int min) {
+		int aux = array[position];
+		int j;
+		for (j = position - 1; j >= min; j--) {
+			if (array[j] > aux)
+				array[j + 1] = array[j];
+			else
+				break;
+		}
+		array[j + 1] = aux;
 	}
 
 }

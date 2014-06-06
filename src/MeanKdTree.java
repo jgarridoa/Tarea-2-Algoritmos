@@ -1,88 +1,83 @@
-import java.util.ArrayList;
+public class MeanKdTree {
 
-
-public class MeanKdTree extends KdTree {
-
-	public MeanKdTree(Point p) {
-		super(p);
+	public static KdTree construirKdTree(Points P, Splitaxis a){
+		return construirKdTree(P, a, 0, P.size() - 1);
 	}
 	
-	public MeanKdTree(Point p, Boolean line){
-		super(p,line);
-	}
-
-	public MeanKdTree(Point p, Boolean line, KdTree izq, KdTree der) {
-		super(p, line, izq, der);
-	}
-
-	@Override
-	public KdTree construirKdtree(ArrayList<Point> P, splitaxis a) {
+	private static KdTree construirKdTree(Points P, Splitaxis a, int minA, int maxA) {
+		if (minA > maxA)
+			return null;		
+		else if (minA == maxA) 
+			return new KdTree(P.getPoint(minA));
 		
-		if(P.size() == 1){
-			return new MeanKdTree(P.get(0));
-		}
-		else{
-			Point Mid = mean(P,a);
-			ArrayList<Point> P1 = new ArrayList<Point>();
-			ArrayList<Point> P2 = new ArrayList<Point>();
-			
-			for(Point point : P){
-				if(a.getAxis().equals("x")){
-					if(point.getX() > Mid.getX()){
-						P2.add(point);
-					}
-					else{
-						P1.add(point);
-					}
-				}
-				else{
-					if(point.getY() > Mid.getY()){
-						P2.add(point);
-					}
-					else{
-						P1.add(point);
-					}
-				}
+
+		else {
+			int[] keyArray, dependantArray;
+			double mean;
+			Point eje;
+			if (a.isX()) {
+				keyArray = P.getListX();
+				dependantArray = P.getListY();
+				mean = mean(keyArray, minA, maxA);
+				eje = new EjeY(mean);
+			} else {
+				keyArray = P.getListY();
+				dependantArray = P.getListX();
+				mean = mean(keyArray, minA, maxA);
+				eje = new EjeX(mean);
 			}
-			a.changeAxis();
-			return new MeanKdTree(Mid, Mid.isLine(), construirKdtree(P1,a), construirKdtree(P2,a));
+
+			int index = partition(keyArray, dependantArray, minA, maxA, mean);
+			if (index > maxA)
+				index = maxA;
+			Splitaxis alterAxis =  Splitaxis.changeAxis(a);
+			return new KdTree(eje, construirKdTree(P, alterAxis, minA, index - 1), construirKdTree(P, alterAxis, index, maxA));
 		}
 	}
-	
-	public Point mean(ArrayList<Point> P, splitaxis a){
-		double x;
-		double y;
-		Point[] points = new Point[P.size()];
-		P.toArray(points);
-		Point max = new Point(Double.MIN_VALUE,Double.MIN_VALUE);
-		Point min = new Point(Double.MAX_VALUE,Double.MAX_VALUE);
-		if(a.getAxis().equals("x")){
-			for(Point point : points){
-				if(point.getX() > max.getX()){
-					max = point;
-				}
-				else if(point.getX() < min.getX()){
-					min = point;
-				}
+
+	private static int partition(int[] keyArray, int[] dependantArray,
+			int minA, int maxA, double pivotValue) {
+		int smaller = minA;
+		int greater = maxA;
+		while (smaller <= greater) {
+			if (keyArray[smaller] <= pivotValue)
+				smaller++;
+			else {
+				// swap keyArray
+				int aux = keyArray[greater];
+				keyArray[greater] = keyArray[smaller];
+				keyArray[smaller] = aux;
+				// swap dependantArray
+				aux = dependantArray[greater];
+				dependantArray[greater] = dependantArray[smaller];
+				dependantArray[smaller] = aux;
+				greater--;
 			}
-			x = (max.getX() + min.getX()) /2;
-			y = 0;
-			return new Point(x,y,true);
-			
 		}
-		else{
-			for(Point point : points){
-				if(point.getY() > max.getY()){
-					max = point;
-				}
-				else if(point.getY() < min.getY()){
-					min = point;
-				}
-			}
-			x = 0;
-			y = (max.getY() + min.getY()) /2;
-			return new Point(x,y,true);
-		}		
+		// al finalizar el ciclo, la variable smaller indicará la posición
+		// del primero de los números más grandes que el pivote
+		return smaller; 
+	}
+
+	public static double mean(int[] array, int start, int end){
+	    for (int i = start; i < end; i+=2){
+            if (array[i] < array[i+1]) {
+            	int tmp = array[i];
+            	array[i] = array[i+1];
+            	array[i+1] = tmp;
+            }
+	    }
+	    int max = array[start]; 
+	    for (int i = start + 2; i <= end; i+=2){
+            if (max < array[i])
+                    max = array[i];
+	    }
+	    int min = array[start + 1];
+	    for (int i = start + 1; i <= end; i+=2){
+            if (min > array[i])
+                    min = array[i];
+	    }
+	    return (min + max)/2.0;
 	}
 
 }
