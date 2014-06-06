@@ -12,7 +12,7 @@ public class MeanKdTree {
 		
 
 		else {
-			int[] keyArray, dependantArray;
+			double[] keyArray, dependantArray;
 			double mean;
 			Point eje;
 			if (a.isX()) {
@@ -35,7 +35,7 @@ public class MeanKdTree {
 		}
 	}
 
-	private static int partition(int[] keyArray, int[] dependantArray,
+	private static int partition(double[] keyArray, double[] dependantArray,
 			int minA, int maxA, double pivotValue) {
 		int smaller = minA;
 		int greater = maxA;
@@ -44,7 +44,7 @@ public class MeanKdTree {
 				smaller++;
 			else {
 				// swap keyArray
-				int aux = keyArray[greater];
+				double aux = keyArray[greater];
 				keyArray[greater] = keyArray[smaller];
 				keyArray[smaller] = aux;
 				// swap dependantArray
@@ -54,25 +54,25 @@ public class MeanKdTree {
 				greater--;
 			}
 		}
-		// al finalizar el ciclo, la variable smaller indicar√° la posici√≥n
-		// del primero de los n√∫meros m√°s grandes que el pivote
+		// al finalizar el ciclo, la variable smaller indicar· la posiciÛn
+		// del primero de los n˙meros m·s grandes que el pivote
 		return smaller; 
 	}
 
-	public static double mean(int[] array, int start, int end){
+	public static double mean(double[] array, int start, int end){
 	    for (int i = start; i < end; i+=2){
             if (array[i] < array[i+1]) {
-            	int tmp = array[i];
+            	double tmp = array[i];
             	array[i] = array[i+1];
             	array[i+1] = tmp;
             }
 	    }
-	    int max = array[start]; 
+	    double max = array[start]; 
 	    for (int i = start + 2; i <= end; i+=2){
             if (max < array[i])
                     max = array[i];
 	    }
-	    int min = array[start + 1];
+	    double min = array[start + 1];
 	    for (int i = start + 1; i <= end; i+=2){
             if (min > array[i])
                     min = array[i];

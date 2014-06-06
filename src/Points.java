@@ -1,30 +1,36 @@
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+
+import org.apache.commons.math3.random.SobolSequenceGenerator;
 
 
 public class Points {	
-	private int[] listX;
-	private int[] listY;
+	private double[] listX;
+	private double[] listY;
+	private int n;
 	
-	public Points(int[] listX, int[] listY){
+	public Points(double[] listX, double[] listY){
 		this.listX = listX;
 		this.listY = listY;
+		this.n = listX.length;
 	}
 	
 	public Points(int n){
-		this.listX = new int[n];
-		this.listY = new int[n];
+		this.listX = new double[n];
+		this.listY = new double[n];
+		this.n=n;
 	}
 	
 	public Point getPoint(int n){
 		return new Point(listX[n], listY[n]);
 	}
 
-	public int[] getListX(){
+	public double[] getListX(){
 		return listX;
 	}
 	
-	public int[]getListY(){
+	public double[]getListY(){
 		return listY;
 	}
 	
@@ -67,4 +73,22 @@ public class Points {
 		return "Points [listX=" + Arrays.toString(listX) + ", listY="
 				+ Arrays.toString(listY) + "]";
 	}
+	
+		public void generateRandomPoints(){
+			Random r = new Random();
+			double c = 0.7;
+			for (int i = 0; i < this.n; i++) {
+				listX[i] =(c*Math.sqrt(n)) * r.nextDouble();
+				listY[i] =(c*Math.sqrt(n)) * r.nextDouble();
+			}
+		}
+		
+		public void generateLowDiscrepancyPoints(){
+			SobolSequenceGenerator gen = new SobolSequenceGenerator(2);
+			for(int i=0; i< this.n; i++){
+				double[] aux = gen.nextVector();
+				listX[i]=aux[0];
+				listY[i]=aux[1];
+			}
+		}
 }
