@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class ExperimentVecinoCercano {
 	
-	public void doMeanExperiment() throws IOException{
+	public void doMeanRandomExperiment() throws IOException{
 		long time_start = 0;
 		long time_stop = 0;
 		Point aux;
@@ -36,9 +36,121 @@ public class ExperimentVecinoCercano {
 				times.add (((time_stop)/20 - (time_start)/20) * Math.pow(10, -9));
 
 			}
-			String name = "MeanVecino" + (j+1);
+			String name = "MeanRandomVecino" + (j+1);
 			saveResults(name,times,pointsres,pointsaux);
 		}
+	}
+	
+	public void doMeanLowDiscrepancyExperiment() throws IOException{
+		long time_start = 0;
+		long time_stop = 0;
+		Point aux;
+		Random r = new Random();
+		ArrayList<Double> times = new ArrayList<Double>();
+		ArrayList<Point[]> pointsres = new ArrayList<Point[]>();
+		ArrayList<Point[]> pointsaux = new ArrayList<Point[]>();
+		for(int j = 0; j < 10; j++){
+			times.clear();
+			for (int i = 10; i < 21; i++) {
+				Points P = new Points((int)Math.pow(2,i));
+				P.generateLowDiscrepancyPoints();
+				KdTree Meantree = MeanKdTree.construirKdTree(P, Splitaxis.getSplitX());
+				Vecino vecino = new Vecino();
+				Point[] res = new Point[20];
+				Point[] auxres = new Point[20];
+				for(int k = 0; k < 20; k++){	
+					aux = new Point( 0.7*Math.sqrt(Math.pow(2,i))*r.nextDouble() , 0.7*Math.sqrt(Math.pow(2,i))*r.nextDouble());
+					time_start += System.nanoTime();
+					res[k]=vecino.masCercano(Meantree,aux);
+					time_stop += System.nanoTime();
+					auxres[k]=aux;
+				}
+				pointsres.add(res);
+				pointsaux.add(auxres);
+				times.add (((time_stop)/20 - (time_start)/20) * Math.pow(10, -9));
+
+			}
+			String name = "MeanLowDiscrepancyVecino" + (j+1);
+			saveResults(name,times,pointsres,pointsaux);
+		}
+	}
+	
+	public void doMeanExperimentPrincipalMem() throws IOException{
+		doMeanLowDiscrepancyExperiment();
+		doMeanRandomExperiment();
+	}
+	
+	public void doMedianRandomExperiment() throws IOException{
+		long time_start = 0;
+		long time_stop = 0;
+		Point aux;
+		Random r = new Random();
+		ArrayList<Double> times = new ArrayList<Double>();
+		ArrayList<Point[]> pointsres = new ArrayList<Point[]>();
+		ArrayList<Point[]> pointsaux = new ArrayList<Point[]>();
+		for(int j = 0; j < 10; j++){
+			times.clear();
+			for (int i = 10; i < 21; i++) {
+				Points P = new Points((int)Math.pow(2,i));
+				P.generateRandomPoints();
+				KdTree Mediantree = MedianKdTree.construirKdTree(P, Splitaxis.getSplitX());
+				Vecino vecino = new Vecino();
+				Point[] res = new Point[20];
+				Point[] auxres = new Point[20];
+				for(int k = 0; k < 20; k++){	
+					aux = new Point( 0.7*Math.sqrt(Math.pow(2,i))*r.nextDouble() , 0.7*Math.sqrt(Math.pow(2,i))*r.nextDouble());
+					time_start += System.nanoTime();
+					res[k]=vecino.masCercano(Mediantree,aux);
+					time_stop += System.nanoTime();
+					auxres[k]=aux;
+				}
+				pointsres.add(res);
+				pointsaux.add(auxres);
+				times.add (((time_stop)/20 - (time_start)/20) * Math.pow(10, -9));
+
+			}
+			String name = "MedianRandomVecino" + (j+1);
+			saveResults(name,times,pointsres,pointsaux);
+		}
+	}
+	
+	public void doMedianLowDiscrepancyExperiment() throws IOException{
+		long time_start = 0;
+		long time_stop = 0;
+		Point aux;
+		Random r = new Random();
+		ArrayList<Double> times = new ArrayList<Double>();
+		ArrayList<Point[]> pointsres = new ArrayList<Point[]>();
+		ArrayList<Point[]> pointsaux = new ArrayList<Point[]>();
+		for(int j = 0; j < 10; j++){
+			times.clear();
+			for (int i = 10; i < 21; i++) {
+				Points P = new Points((int)Math.pow(2,i));
+				P.generateLowDiscrepancyPoints();
+				KdTree Mediantree = MedianKdTree.construirKdTree(P, Splitaxis.getSplitX());
+				Vecino vecino = new Vecino();
+				Point[] res = new Point[20];
+				Point[] auxres = new Point[20];
+				for(int k = 0; k < 20; k++){	
+					aux = new Point( 0.7*Math.sqrt(Math.pow(2,i))*r.nextDouble() , 0.7*Math.sqrt(Math.pow(2,i))*r.nextDouble());
+					time_start += System.nanoTime();
+					res[k]=vecino.masCercano(Mediantree,aux);
+					time_stop += System.nanoTime();
+					auxres[k]=aux;
+				}
+				pointsres.add(res);
+				pointsaux.add(auxres);
+				times.add (((time_stop)/20 - (time_start)/20) * Math.pow(10, -9));
+
+			}
+			String name = "MedianLowDiscrepancyVecino" + (j+1);
+			saveResults(name,times,pointsres,pointsaux);
+		}
+	}
+	
+	public void doMedianExperimentPrincipalMem() throws IOException{
+		doMedianLowDiscrepancyExperiment();
+		doMedianRandomExperiment();
 	}
 	
 	public void saveResults(String name,ArrayList<Double> times, ArrayList<Point[]> pointsres, ArrayList<Point[]> pointsaux) throws IOException {
