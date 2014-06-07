@@ -1,11 +1,12 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MedianKdTree {
 
-	public static KdTree construirKdTree(Points P, Splitaxis a){
+	public static KdTree construirKdTree(Points P, Splitaxis a) {
 		return construirKdTree(P, a, 0, P.size() - 1);
 	}
-	
+
 	private static KdTree construirKdTree(Points P, Splitaxis a, int minA,
 			int maxA) {
 		if (minA > maxA)
@@ -15,111 +16,104 @@ public class MedianKdTree {
 
 		else {
 			int[] keyArray, dependantArray;
-			int median;
+			int medianIndex = (maxA + minA) / 2;
 			Point eje;
 			if (a.isX()) {
 				keyArray = P.getListX();
 				dependantArray = P.getListY();
-				median = QuickSelect(keyArray, dependantArray, minA, maxA, (maxA - minA) /2);
-				eje = new EjeY(median);
+				int medianValue = select2(medianIndex, keyArray,
+						dependantArray, minA, maxA);
+				eje = new EjeY(medianValue);
 			} else {
 				keyArray = P.getListY();
 				dependantArray = P.getListX();
-				median = QuickSelect(keyArray, dependantArray, minA, maxA, (maxA - minA) /2);
-				eje = new EjeX(median);
+				int medianValue = select2(medianIndex, keyArray,
+						dependantArray, minA, maxA);
+				eje = new EjeX(medianValue);
 			}
 
-			
-			if (median > maxA)
-				median = maxA;
 			Splitaxis alterAxis = Splitaxis.changeAxis(a);
 			return new KdTree(eje, construirKdTree(P, alterAxis, minA,
-					median - 1), construirKdTree(P, alterAxis, median, maxA));
+					Math.max(medianIndex, minA)), construirKdTree(P,
+					alterAxis, Math.min(medianIndex + 1, maxA), maxA));
 		}
 	}
 
+	public static int select(int k, int[] keyArray, int[] dependantArray) {
+		return select2(k, keyArray, dependantArray, 0, keyArray.length - 1);
+	}
 
-	private static int partition(int[] keyArray, int[] dependantArray,
-			int minA, int maxA, double pivotValue) {
-		int smaller = minA;
-		int greater = maxA;
-		while (smaller <= greater) {
-			if (keyArray[smaller] <= pivotValue)
-				smaller++;
-			else {
-				// swap keyArray
-				int aux = keyArray[greater];
-				keyArray[greater] = keyArray[smaller];
-				keyArray[smaller] = aux;
-				if (dependantArray != null) {
-					// swap dependantArray
-					aux = dependantArray[greater];
-					dependantArray[greater] = dependantArray[smaller];
-					dependantArray[smaller] = aux;
-					greater--;
-				}
+	public static int select2(int k, int[] keyArray, int[] dependantArray,
+			int low, int high) {
+		if (high == low)
+			return keyArray[low];
+		else {
+			int pivot = partition2(keyArray, dependantArray, low, high);
+			if (k == pivot)
+				return keyArray[pivot];
+			else if (k < pivot)
+				return select2(k, keyArray, dependantArray, low,
+						Math.max(low, pivot - 1));
+			else
+				return select2(k, keyArray, dependantArray,
+						Math.min(pivot + 1, high), high);
+		}
+	}
+
+	public static int partition2(int[] keyArray, int dependantArray[], int low,
+			int high) {
+		final int size = high - low + 1;
+		int i, j, mark, first, last, pivotIndex, pivotValue;
+		if (size <= 5) {
+			int[] aux = Arrays.copyOfRange(keyArray, low, high + 1);
+			Arrays.sort(aux);
+			pivotValue = aux[(high - low) / 2];
+		} else {
+			final int numMedians = (int) Math.ceil(size / 5d);
+
+			int[] medians = new int[numMedians];
+
+			for (i = 0; i < numMedians; i++) {
+				first = low + 5 * i;
+				last = Math.min(first + 4, high);
+				int[] aux = Arrays.copyOfRange(keyArray, first, last + 1);
+				Arrays.sort(aux);
+				medians[i] = aux[(last - first + 1) / 2];
+			}
+			if (numMedians <= 5) {
+				Arrays.sort(medians);
+				pivotValue = medians[numMedians / 2];
+			} else
+				pivotValue = select(numMedians / 2, medians, null);
+		}
+
+		j = mark = low;
+		for (i = low; i <= high; i++) {
+			if (keyArray[i] == pivotValue) {
+				swap(keyArray, i, j);
+				if (dependantArray != null)
+					swap(dependantArray, i, j);
+				mark = j;
+				j++;
+			} else if (keyArray[i] < pivotValue) {
+				swap(keyArray, i, j);
+				if (dependantArray != null)
+					swap(dependantArray, i, j);
+				j++;
 			}
 		}
-		// al finalizar el ciclo, la variable smaller indicará la posición
-		// del primero de los números más grandes que el pivote
-		return smaller;
-	}
 
-	public static int QuickSelect(int[] keyArray, int[] dependantArray,
-			int first, int last, int n) {
-		if (first >= last)
-			return last;
-		int pivotValue = medianOfMedians(keyArray, first, last);
-		int pivotIndex = partition(keyArray, dependantArray, first, last,
-				pivotValue);
-
-		if (pivotIndex == n)
-			return keyArray[n];
-		else if (pivotIndex > n)
-			return QuickSelect(keyArray, dependantArray, first, pivotIndex - 1,
-					n);
-		else
-			return QuickSelect(keyArray, dependantArray, pivotIndex + 1, last,
-					n);
+		pivotIndex = j - 1;
+		swap(keyArray, mark, pivotIndex);
+		if (dependantArray != null)
+			swap(dependantArray, mark, pivotIndex);
+		return pivotIndex;
 
 	}
 
-	// Selección de la Mediana de las medianas
-	private static int medianOfMedians(int[] keyArray, int first, int last) {
-		int numMedians = (int) Math.ceil((last - first) / 5d);
-		if (numMedians == 1){
-			insertionSort(keyArray, first, last);
-			return keyArray[(first + last)/2 ];
-		}
-			
-		int[] medians = new int[numMedians];
-		for (int i = 0; i < numMedians; i++) {
-			int subLeft = first + i * 5;
-			int subRight = subLeft + 4;
-			if (subRight > last)
-				subRight = last;
-			insertionSort(keyArray, subLeft, subRight);
-			medians[i] = keyArray[(subRight + subLeft) / 2];
-		}
-		return QuickSelect(medians, null, 0, numMedians - 1, numMedians /2 );
-
+	public static void swap(int[] array, int low, int high) {
+		int aux = array[low];
+		array[low] = array[high];
+		array[high] = aux;
 	}
-
-	private static void insertionSort(int[] array, int min, int max) {
-		for (int i = min; i <= max; i++)
-			insert(array, i, min);
-	}
-
-	private static void insert(int[] array, int position, int min) {
-		int aux = array[position];
-		int j;
-		for (j = position - 1; j >= min; j--) {
-			if (array[j] > aux)
-				array[j + 1] = array[j];
-			else
-				break;
-		}
-		array[j + 1] = aux;
-	}
-
 }

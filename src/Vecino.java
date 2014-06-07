@@ -21,7 +21,7 @@ public class Vecino {
 		if (T.isLine()) {
 			KdTree nodoCercano, nodoDistante;
 			double distanciaAlEje;
-			if (T.getPoint().getX() == 0) { // si es que estamos en una línea paralela al eje x
+			if (T.getPoint() instanceof EjeX) { // si es que estamos en una línea paralela al eje x
 				distanciaAlEje = Math.abs((T.getPoint().getY() - q.getY()));
 				if (q.getY() < T.getPoint().getY()) {
 					nodoCercano = T.izq;
@@ -44,7 +44,7 @@ public class Vecino {
 			}
 			if (nodoCercano!= null)
 				buscarMasCercano(nodoCercano, q); // cuando esta recursión termina, se habrá encontrado el punto que está en la misma región que Q
-			if (distanciaAlEje < this.distanciaActual && nodoDistante != null)
+			if (distanciaAlEje <= this.distanciaActual && nodoDistante != null)
 				buscarMasCercano(nodoDistante, q);
 		} else { // si es que es un punto
 			double dist = distancia(T.getPoint(), q);
