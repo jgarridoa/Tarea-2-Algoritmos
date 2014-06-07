@@ -1,0 +1,12 @@
+Resultados del experimento con MeanRandom1
+Arbol de tamaño: 2^10 Altura: 15 Size: 2047 Tiempo: 3.1069100000000004E-4
+Arbol de tamaño: 2^11 Altura: 16 Size: 4095 Tiempo: 8.03317E-4
+Arbol de tamaño: 2^12 Altura: 17 Size: 8191 Tiempo: 0.001100012
+Arbol de tamaño: 2^13 Altura: 18 Size: 16383 Tiempo: 0.002688452
+Arbol de tamaño: 2^14 Altura: 19 Size: 32767 Tiempo: 0.004953319
+Arbol de tamaño: 2^15 Altura: 21 Size: 65535 Tiempo: 0.011404577
+Arbol de tamaño: 2^16 Altura: 21 Size: 131071 Tiempo: 0.021413847
+Arbol de tamaño: 2^17 Altura: 23 Size: 262143 Tiempo: 0.045119151
+Arbol de tamaño: 2^18 Altura: 24 Size: 524287 Tiempo: 0.093910141
+Arbol de tamaño: 2^19 Altura: 26 Size: 1048575 Tiempo: 0.201754235
+Arbol de tamaño: 2^20 Altura: 26 Size: 2097151 Tiempo: 0.454365597

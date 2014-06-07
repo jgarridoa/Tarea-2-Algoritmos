@@ -1,0 +1,12 @@
+Resultados del experimento con MeanLowDiscrepancy2
+Arbol de tamaño: 2^10 Altura: 14 Size: 2047 Tiempo: 3.31216E-4
+Arbol de tamaño: 2^11 Altura: 15 Size: 4095 Tiempo: 6.75495E-4
+Arbol de tamaño: 2^12 Altura: 16 Size: 8191 Tiempo: 0.001449889
+Arbol de tamaño: 2^13 Altura: 18 Size: 16383 Tiempo: 0.002393156
+Arbol de tamaño: 2^14 Altura: 19 Size: 32767 Tiempo: 0.005358244000000001
+Arbol de tamaño: 2^15 Altura: 20 Size: 65535 Tiempo: 0.009271729000000001
+Arbol de tamaño: 2^16 Altura: 22 Size: 131071 Tiempo: 0.022993423000000002
+Arbol de tamaño: 2^17 Altura: 22 Size: 262143 Tiempo: 0.042103682
+Arbol de tamaño: 2^18 Altura: 24 Size: 524287 Tiempo: 0.194030359
+Arbol de tamaño: 2^19 Altura: 25 Size: 1048575 Tiempo: 0.19768073900000002
+Arbol de tamaño: 2^20 Altura: 26 Size: 2097151 Tiempo: 0.553248651

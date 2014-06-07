@@ -25,4 +25,21 @@ public class KdTree {
 		return this.p;
 	}
 
+	public int getSize(){
+		if(p.isLine){
+			return 1 + this.izq.getSize() + this.der.getSize();
+		}
+		else{
+			return 1;
+		}
+	}
+	
+	public int getHeight(){
+		if(p.isLine){
+			return 1 + Math.max(this.izq.getHeight(),this.der.getHeight()); 
+		}
+		else{
+			return 1;
+		}
+	}
 }

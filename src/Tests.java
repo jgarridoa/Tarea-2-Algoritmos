@@ -42,8 +42,26 @@ public class Tests {
 //		KdTree tree = MeanKdTree.construirKdTree(points, Splitaxis.getSplitX());
 //	}
 	
+	@Test
+	public void testMean(){		
+		Points points = new Points(100);
+		points.generateLowDiscrepancyPoints();
+		for (int i= 0; i< 100; i++){
+			System.out.println(i);
+			//System.out.println(points);
+			System.out.println("Search: " + points.getPoint(i).toString());
+			KdTree tree = MeanKdTree.construirKdTree(points, Splitaxis.getSplitX());
+			Vecino vecino = new Vecino();
+			Point expected = buscarVecinoSimple(points, points.getPoint(i));
+			Point actual = vecino.masCercano(tree, points.getPoint(i));
+			System.out.println("Expected: " + expected.toString());
+			System.out.println("Actual: " + actual.toString());
+			assertEquals(distancia(expected, points.getPoint(i)), distancia(actual, points.getPoint(i)), 0.03);
+		}
+	}
+	
 //	@Test
-//	public void testMean(){		 
+//	public void testMedian(){		 
 //		Random rdm = new Random();
 //		for (int i= 1; i< 100; i++){
 //			System.out.println(i);
@@ -51,7 +69,7 @@ public class Tests {
 //			//System.out.println(points);
 //			Point p = new Point(rdm.nextInt(100),rdm.nextInt(100));
 //			System.out.println("Search: " + p.toString());
-//			KdTree tree = MeanKdTree.construirKdTree(points, Splitaxis.getSplitX());
+//			KdTree tree = MedianKdTree.construirKdTree(points, Splitaxis.getSplitX());
 //			Vecino vecino = new Vecino();
 //			Point expected = buscarVecinoSimple(points, p);
 //			Point actual = vecino.masCercano(tree, p);
@@ -60,23 +78,4 @@ public class Tests {
 //			assertEquals(distancia(expected, p), distancia(actual, p), 0.03);
 //		}
 //	}
-	
-	@Test
-	public void testMedian(){		 
-		Random rdm = new Random();
-		for (int i= 1; i< 100; i++){
-			System.out.println(i);
-			Points points = generarPuntos(10*i);
-			//System.out.println(points);
-			Point p = new Point(rdm.nextInt(100),rdm.nextInt(100));
-			System.out.println("Search: " + p.toString());
-			KdTree tree = MedianKdTree.construirKdTree(points, Splitaxis.getSplitX());
-			Vecino vecino = new Vecino();
-			Point expected = buscarVecinoSimple(points, p);
-			Point actual = vecino.masCercano(tree, p);
-			System.out.println("Expected: " + expected.toString());
-			System.out.println("Actual: " + actual.toString());
-			assertEquals(distancia(expected, p), distancia(actual, p), 0.03);
-		}
-	}
 }

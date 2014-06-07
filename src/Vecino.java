@@ -3,7 +3,7 @@ public class Vecino {
 	private double distanciaActual;
 
 	public Vecino() {
-		mejorActual = new Point(0, 0);
+		mejorActual = new Point(Double.MAX_VALUE,Double.MAX_VALUE);
 		distanciaActual = Double.MAX_VALUE;
 	}
 
@@ -13,6 +13,8 @@ public class Vecino {
 	}
 	
 	public Point masCercano(KdTree T, Point q){
+		mejorActual = new Point(Double.MAX_VALUE,Double.MAX_VALUE);
+		distanciaActual = Double.MAX_VALUE;
 		buscarMasCercano(T, q);
 		return mejorActual;
 	}

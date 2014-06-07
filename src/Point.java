@@ -64,7 +64,15 @@ public class Point {
 	}
 
 	public String toString() {
-	 	return "Point(" + this.x + "," + this.y + ")";
+	 	return "Point(" + round(this.x,2) + "," + round(this.y,2) + ")";
 	}
+	
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
 
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
+	}
 }
