@@ -15,19 +15,19 @@ public class MedianKdTree {
 			return new KdTree(P.getPoint(minA));
 
 		else {
-			int[] keyArray, dependantArray;
+			double[] keyArray, dependantArray;
 			int medianIndex = (maxA + minA) / 2;
 			Point eje;
 			if (a.isX()) {
 				keyArray = P.getListX();
 				dependantArray = P.getListY();
-				int medianValue = select2(medianIndex, keyArray,
+				double medianValue = select2(medianIndex, keyArray,
 						dependantArray, minA, maxA);
 				eje = new EjeY(medianValue);
 			} else {
 				keyArray = P.getListY();
 				dependantArray = P.getListX();
-				int medianValue = select2(medianIndex, keyArray,
+				double medianValue = select2(medianIndex, keyArray,
 						dependantArray, minA, maxA);
 				eje = new EjeX(medianValue);
 			}
@@ -39,11 +39,11 @@ public class MedianKdTree {
 		}
 	}
 
-	public static int select(int k, int[] keyArray, int[] dependantArray) {
+	public static double select(int k, double[] keyArray, double[] dependantArray) {
 		return select2(k, keyArray, dependantArray, 0, keyArray.length - 1);
 	}
 
-	public static int select2(int k, int[] keyArray, int[] dependantArray,
+	public static double select2(int k, double[] keyArray, double[] dependantArray,
 			int low, int high) {
 		if (high == low)
 			return keyArray[low];
@@ -60,23 +60,24 @@ public class MedianKdTree {
 		}
 	}
 
-	public static int partition2(int[] keyArray, int dependantArray[], int low,
+	public static int partition2(double[] keyArray, double[] dependantArray, int low,
 			int high) {
 		final int size = high - low + 1;
-		int i, j, mark, first, last, pivotIndex, pivotValue;
+		int i, j, mark, first, last, pivotIndex;
+		double pivotValue;
 		if (size <= 5) {
-			int[] aux = Arrays.copyOfRange(keyArray, low, high + 1);
+			double[] aux = Arrays.copyOfRange(keyArray, low, high + 1);
 			Arrays.sort(aux);
 			pivotValue = aux[(high - low) / 2];
 		} else {
 			final int numMedians = (int) Math.ceil(size / 5d);
 
-			int[] medians = new int[numMedians];
+			double[] medians = new double[numMedians];
 
 			for (i = 0; i < numMedians; i++) {
 				first = low + 5 * i;
 				last = Math.min(first + 4, high);
-				int[] aux = Arrays.copyOfRange(keyArray, first, last + 1);
+				double[] aux = Arrays.copyOfRange(keyArray, first, last + 1);
 				Arrays.sort(aux);
 				medians[i] = aux[(last - first + 1) / 2];
 			}
@@ -111,8 +112,8 @@ public class MedianKdTree {
 
 	}
 
-	public static void swap(int[] array, int low, int high) {
-		int aux = array[low];
+	public static void swap(double[] array, int low, int high) {
+		double aux = array[low];
 		array[low] = array[high];
 		array[high] = aux;
 	}
